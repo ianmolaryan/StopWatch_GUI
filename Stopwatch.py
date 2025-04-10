@@ -1,7 +1,7 @@
 import tkinter as tk
 
 running = False
-hours, minutes, seconds = 0, 0, 0
+hours, minutes, seconds, miliseconds = 0, 0, 0, 0
 
 def start():
     global running
@@ -20,13 +20,16 @@ def reset():
     if running:
         stopwatch_label.after_cancel(update_time)
         running = False
-    global hours, minutes, seconds
-    hours, minutes, seconds = 0, 0, 0
-    stopwatch_label.config(text='00:00:00')
+    global hours, minutes, seconds, miliseconds
+    hours, minutes, seconds, miliseconds = 0, 0, 0, 0
+    stopwatch_label.config(text='00:00:00:0000')
 
 def update():
-    global hours, minutes, seconds
-    seconds += 1
+    global hours, minutes, seconds, miliseconds
+    miliseconds+=1
+    if miliseconds == 1000:
+        miliseconds = 0
+        seconds += 1
     if seconds == 60:
         minutes += 1
         seconds = 0
@@ -36,15 +39,16 @@ def update():
     hours_string = f'{hours}' if hours > 9 else f'0{hours}'
     minutes_string = f'{minutes}' if minutes > 9 else f'0{minutes}'
     seconds_string = f'{seconds}' if seconds > 9 else f'0{seconds}'
-    stopwatch_label.config(text=hours_string + ':' + minutes_string + ':' + seconds_string)
+    miliseconds_string = f'{miliseconds}' if miliseconds > 9 else f'0{miliseconds}'
+    stopwatch_label.config(text=hours_string + ':' + minutes_string + ':' + seconds_string + ':' + miliseconds_string)
     global update_time
-    update_time = stopwatch_label.after(1000, update)
+    update_time = stopwatch_label.after(1, update)
 
 root = tk.Tk()
-root.geometry('485x220')
+root.geometry('720x220')
 root.title('Stopwatch')
 
-stopwatch_label = tk.Label(text='00:00:00', font=('Arial', 80))
+stopwatch_label = tk.Label(text='00:00:00:0000', font=('Arial', 80))
 stopwatch_label.pack()
 
 start_button = tk.Button(text='start', height=5, width=7, font=('Arial', 20), command=start)
